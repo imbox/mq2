@@ -1,0 +1,28 @@
+{
+  "name": "mq2",
+  "version": "0.0.1",
+  "description": "Second generation ImBox RabbitMQ client",
+  "main": "index.js",
+  "scripts": {
+    "lint": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imbox/mq2.git"
+  },
+  "author": "Mathias Lundell",
+  "private": true,
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/imbox/mq2/issues"
+  },
+  "homepage": "https://github.com/imbox/mq2#readme",
+  "devDependencies": {
+    "standard": "^10.0.3"
+  },
+  "dependencies": {
+    "buffered-queue": "^0.1.4",
+    "rabbit-routingkey-parser": "^1.1.2",
+    "kanin": "~1.0.0"
+  }
+}
