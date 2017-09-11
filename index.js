@@ -185,8 +185,7 @@ Mq2.prototype.publish = function (exchangeName, message) {
 }
 
 Mq2.prototype.request = function (exchangeName, message, cb) {
-  assert(cb, 'callback missing')
-  this.kanin.request(exchangeName, message)
+  this.kanin.request(exchangeName, message, cb)
 }
 
 function parseRoutingKeys (types, routingKey) {
