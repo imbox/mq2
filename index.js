@@ -88,10 +88,10 @@ Mq2.prototype.handle = function (opts, cb) {
   const queue = opts.queue
   const handler = opts.handler
   const options = {
-    prefetch: opts.prefetch || 0,
-    noAck: opts.noAck || false,
-    exclusive: opts.exclusive || false,
-    arguments: opts.arguments || null
+    prefetch: setDefault(opts.prefetch, 0),
+    noAck: setDefault(opts.noAck, false),
+    exclusive: setDefault(opts.exclusive, false),
+    arguments: setDefault(opts.arguments, null)
   }
 
   const onUncaughtException = opts.onUncaughtException
@@ -215,9 +215,15 @@ function parseRoutingKeys (types, routingKey) {
   return foundParts || [routingKey]
 }
 
+function setDefault (x, val) {
+  return x === undefined ? val : null
+}
+
 const getNanoSeconds = () => {
   const hr = process.hrtime()
   return hr[0] * 1e9 + hr[1]
 }
 const loadTime = getNanoSeconds()
 const now = () => (getNanoSeconds() - loadTime) / 1e6
+
+const exists = x => x != null
