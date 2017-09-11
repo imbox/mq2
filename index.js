@@ -216,7 +216,7 @@ function parseRoutingKeys (types, routingKey) {
 }
 
 function setDefault (x, val) {
-  return x === undefined ? val : null
+  return x !== undefined ? x : val
 }
 
 const getNanoSeconds = () => {
@@ -225,5 +225,3 @@ const getNanoSeconds = () => {
 }
 const loadTime = getNanoSeconds()
 const now = () => (getNanoSeconds() - loadTime) / 1e6
-
-const exists = x => x != null
