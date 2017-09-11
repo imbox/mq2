@@ -45,6 +45,10 @@ function Mq2 (opts) {
     logger.warn(`Rabbitmq connection failed (unintentional) ${err.stack}`)
   })
 
+  this.kanin.on('channel.error', err => {
+    throw err
+  })
+
   this.kanin.on(
     'connection.unreachable',
     opts.onConnectionUnreachable ||
