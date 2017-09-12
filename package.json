@@ -23,6 +23,6 @@
   "dependencies": {
     "buffered-queue": "^0.1.4",
     "rabbit-routingkey-parser": "^1.1.2",
-    "kanin": "~1.0.6"
+    "kanin": "~1.0.7"
   }
 }
