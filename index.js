@@ -147,6 +147,12 @@ Mq2.prototype.handle = function (opts, cb) {
         clearTimeout(message.timeoutHandler)
         reject(message)
       }
+
+      const reply = message.reply
+      message.reply = body => {
+        message.ack()
+        reply(body)
+      }
     }
 
     message.fields.parts = parseRoutingKeys(types, message.fields.routingKey)
