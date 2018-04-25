@@ -26,7 +26,8 @@ function Mq2 (opts) {
 
   const logger = (this.logger = opts.logger || {
     debug: console.log,
-    warn: console.error
+    warn: console.error,
+    trace () {}
   })
 
   this.kanin.on('error', err => {
@@ -127,6 +128,7 @@ Mq2.prototype.handle = function (opts, cb) {
 
       const ack = message.ack
       message.ack = () => {
+        logger.trace(`Ack delivery tag ${message.fields.deliveryTag}`)
         if (statisticsEnabled) {
           statsQueue.add({
             routingKey: message.fields.routingKey,
@@ -142,18 +144,21 @@ Mq2.prototype.handle = function (opts, cb) {
 
       const nack = message.nack
       message.nack = () => {
+        logger.trace(`Nack delivery tag ${message.fields.deliveryTag}`)
         clearTimeout(message.timeoutHandler)
         nack(message)
       }
 
       const reject = message.reject
       message.reject = () => {
+        logger.trace(`Reject delivery tag ${message.fields.deliveryTag}`)
         clearTimeout(message.timeoutHandler)
         reject(message)
       }
 
       const reply = message.reply
       message.reply = body => {
+        logger.trace(`Reply delivery tag ${message.fields.deliveryTag}`)
         message.ack()
         reply(body)
       }
@@ -175,6 +180,7 @@ Mq2.prototype.handle = function (opts, cb) {
     }
   }
 
+  logger.trace(`Handle queue ${queue} with options: ${util.inspect(options)}`)
   this.kanin.handle({ queue, options, onMessage }, cb)
 }
 
