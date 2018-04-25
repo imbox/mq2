@@ -22,7 +22,7 @@ function Mq2 (opts) {
   this.serviceName = opts.serviceName || 'default'
   this.topology = opts.topology
 
-  this.kanin = new Kanin({topology: opts.topology})
+  this.kanin = new Kanin({ topology: opts.topology })
 
   const logger = (this.logger = opts.logger || {
     debug: console.log,
@@ -31,6 +31,10 @@ function Mq2 (opts) {
 
   this.kanin.on('error', err => {
     throw err
+  })
+
+  this.kanin.on('channel.error', err => {
+    logger.warn(`Rabbitmq channel error ${err.stack}`)
   })
 
   this.kanin.on('connection.opened', () => {
@@ -171,7 +175,7 @@ Mq2.prototype.handle = function (opts, cb) {
     }
   }
 
-  this.kanin.handle({queue, options, onMessage}, cb)
+  this.kanin.handle({ queue, options, onMessage }, cb)
 }
 
 Mq2.prototype.close = function (cb) {
