@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "buffered-queue": "^0.1.4",
-    "rabbit-routingkey-parser": "^1.1.2",
-    "kanin": "^1.0.21"
+    "kanin": "^1.0.22",
+    "rabbit-routingkey-parser": "^1.1.2"
   }
 }
