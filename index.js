@@ -38,6 +38,10 @@ function Mq2 (opts) {
     logger.warn(`Rabbitmq channel error ${err.stack}`)
   })
 
+  this.kanin.on('channel.drain', () => {
+    logger.debug(`Channel drained`)
+  })
+
   this.kanin.on('connection.opened', () => {
     logger.debug('Rabbitmq connection opened')
   })
@@ -197,11 +201,19 @@ Mq2.prototype.shutdown = function (cb) {
 }
 
 Mq2.prototype.publish = function (exchangeName, message) {
-  this.kanin.publish(exchangeName, message)
+  if (!this.kanin.publish(exchangeName, message)) {
+    throw new Error(
+      'mq write buffer not ready for publish (handle drain events)'
+    )
+  }
 }
 
 Mq2.prototype.request = function (exchangeName, message, cb) {
-  this.kanin.request(exchangeName, message, cb)
+  if (!this.kanin.request(exchangeName, message, cb)) {
+    throw new Error(
+      'mq write buffer not ready for request (handle drain events'
+    )
+  }
 }
 
 function parseRoutingKeys (types, routingKey) {
