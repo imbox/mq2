@@ -104,7 +104,7 @@ Mq2.prototype.handle = function (opts, cb) {
 
   const logger = this.logger
   const serviceName = this.serviceName
-  const unhandledTimeout = this.unhandledTimeout
+  const unhandledTimeout = opts.unhandledTimeout || this.unhandledTimeout
   const statisticsEnabled = this.statisticsEnabled
   const statsQueue = this.statsQueue
 
