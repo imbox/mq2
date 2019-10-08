@@ -1,13 +1,11 @@
 const assert = require('assert')
 const BufferedQueue = require('buffered-queue')
 const RoutingKeyParser = require('rabbit-routingkey-parser')
-const util = require('util')
+const { inspect, promisify } = require('util')
 const parser = new RoutingKeyParser()
 const Kanin = require('kanin')
 
 module.exports = Mq2
-
-const noop = () => {}
 
 function Mq2 (opts) {
   if (!new.target) {
@@ -21,8 +19,14 @@ function Mq2 (opts) {
   this.statisticsEnabled = opts.statisticsEnabled || false
   this.serviceName = opts.serviceName || 'default'
   this.topology = opts.topology
+  this.requestTimeout = opts.requestTimeout || 10000
+  this.publishTimeout = opts.publishTimeout || 5000
 
-  this.kanin = new Kanin({ topology: opts.topology })
+  this.kanin = new Kanin({
+    topology: opts.topology,
+    requestTimeout: this.requestTimeout,
+    publishTimeout: this.publishTimeout
+  })
 
   const logger = (this.logger = opts.logger || {
     debug: console.log,
@@ -36,10 +40,6 @@ function Mq2 (opts) {
 
   this.kanin.on('channel.error', err => {
     logger.warn(`Rabbitmq channel error ${err.stack}`)
-  })
-
-  this.kanin.on('channel.drain', () => {
-    logger.debug(`Channel drained`)
   })
 
   this.kanin.on('connection.opened', () => {
@@ -79,17 +79,20 @@ function Mq2 (opts) {
             timestamp: new Date().toISOString()
           }
         })
+          .then(() => {})
+          .catch(err => {
+            logger.warn(`Publish to stats-queue: ${err.stack}`)
+          })
       }
     })
   }
 }
 
-Mq2.prototype.configure = function (cb) {
-  assert(cb, 'callback missing')
+Mq2.prototype.configure = promisify(function (cb) {
   this.kanin.configure(cb)
-}
+})
 
-Mq2.prototype.handle = function (opts, cb) {
+Mq2.prototype.handle = promisify(function (opts, cb) {
   const queue = opts.queue
   const handler = opts.handler
   const options = {
@@ -102,6 +105,7 @@ Mq2.prototype.handle = function (opts, cb) {
   const onUncaughtException = opts.onUncaughtException
   const types = opts.types
 
+  const kanin = this.kanin
   const logger = this.logger
   const serviceName = this.serviceName
   const unhandledTimeout = opts.unhandledTimeout || this.unhandledTimeout
@@ -122,12 +126,12 @@ Mq2.prototype.handle = function (opts, cb) {
 
     if (options.noAck !== true) {
       message.timeoutHandler = setTimeout(() => {
-        logger.warn(`TimeoutError: ${util.inspect(message)}`)
         message.reject()
         message.ack = () => {}
         message.nack = () => {}
         message.reply = () => {}
         message.reject = () => {}
+        onUncaughtException(new Error('ETIMEOUT'), message)
       }, unhandledTimeout)
 
       const ack = message.ack
@@ -161,11 +165,11 @@ Mq2.prototype.handle = function (opts, cb) {
       }
 
       const reply = message.reply
-      message.reply = body => {
+      message.reply = promisify((body, cb) => {
         logger.trace(`Reply delivery tag ${message.fields.deliveryTag}`)
         message.ack()
-        reply(body)
-      }
+        reply(body, cb)
+      })
     }
 
     message.fields.parts = parseRoutingKeys(types, message.fields.routingKey)
@@ -184,37 +188,29 @@ Mq2.prototype.handle = function (opts, cb) {
     }
   }
 
-  logger.trace(`Handle queue ${queue} with options: ${util.inspect(options)}`)
-  this.kanin.handle({ queue, options, onMessage }, cb)
-}
+  logger.trace(`Handle queue ${queue} with options: ${inspect(options)}`)
+  kanin.handle({ queue, options, onMessage }, cb)
+})
 
-Mq2.prototype.close = function (cb) {
-  this.kanin.close(cb || noop)
-}
+Mq2.prototype.close = promisify(function (cb) {
+  this.kanin.close(cb)
+})
 
-Mq2.prototype.unsubscribeAll = function (cb) {
-  this.kanin.unsubscribeAll(cb || noop)
-}
+Mq2.prototype.unsubscribeAll = promisify(function (cb) {
+  this.kanin.unsubscribeAll(cb)
+})
 
-Mq2.prototype.shutdown = function (cb) {
-  this.kanin.close(cb || noop)
-}
+Mq2.prototype.shutdown = promisify(function (cb) {
+  this.kanin.close(cb)
+})
 
-Mq2.prototype.publish = function (exchangeName, message) {
-  if (!this.kanin.publish(exchangeName, message)) {
-    throw new Error(
-      'mq write buffer not ready for publish (handle drain events)'
-    )
-  }
-}
+Mq2.prototype.publish = promisify(function (exchangeName, message, cb) {
+  this.kanin.publish(exchangeName, message, cb)
+})
 
-Mq2.prototype.request = function (exchangeName, message, cb) {
-  if (!this.kanin.request(exchangeName, message, cb)) {
-    throw new Error(
-      'mq write buffer not ready for request (handle drain events'
-    )
-  }
-}
+Mq2.prototype.request = promisify(async function (exchangeName, message, cb) {
+  this.kanin.request(exchangeName, message, cb)
+})
 
 function parseRoutingKeys (types, routingKey) {
   if (!types || types.length === 0) {

@@ -1,6 +1,6 @@
 {
   "name": "mq2",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "description": "Second generation ImBox RabbitMQ client",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "buffered-queue": "^0.1.4",
-    "kanin": "^1.0.22",
+    "kanin": "^3.0.0",
     "rabbit-routingkey-parser": "^1.1.2"
   }
 }
