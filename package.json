@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/imbox/mq2#readme",
   "devDependencies": {
-    "standard": "^10.0.3"
+    "standard": "^14.3.1"
   },
   "dependencies": {
     "buffered-queue": "^0.1.4",
