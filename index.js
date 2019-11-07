@@ -124,7 +124,9 @@ Mq2.prototype.handle = promisify(function (opts, cb) {
       message.body._meta.services.push([serviceName, startDateTimeMs])
     }
 
-    if (options.noAck !== true) {
+    if (options.noAck === true) {
+      message.reply = promisify(message.reply)
+    } else {
       message.timeoutHandler = setTimeout(() => {
         message.reject()
         message.ack = () => {}
