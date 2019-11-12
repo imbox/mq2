@@ -115,6 +115,13 @@ Mq2.prototype.handle = promisify(function (opts, cb) {
   const onMessage = message => {
     const startDateTimeMs = new Date().getTime()
     const startTime = now()
+    let queueMs
+    if (Number.isInteger(message.properties.headers.timestamp_in_ms)) {
+      queueMs = Math.max(
+        startDateTimeMs - message.properties.headers.timestamp_in_ms,
+        0
+      )
+    }
 
     if (
       serviceName !== 'default' &&
@@ -142,10 +149,11 @@ Mq2.prototype.handle = promisify(function (opts, cb) {
         if (statisticsEnabled) {
           statsQueue.add({
             routingKey: message.fields.routingKey,
-            queue: queue,
+            queue,
             startTime: startDateTimeMs,
             json: JSON.stringify(message.body),
-            duration: now() - startTime
+            duration: now() - startTime,
+            queueMs
           })
         }
         clearTimeout(message.timeoutHandler)
