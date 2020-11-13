@@ -27,6 +27,15 @@ function Mq2 (opts) {
     requestTimeout: this.requestTimeout,
     publishTimeout: this.publishTimeout
   })
+  this.writeKanin = new Kanin({
+    topology: {
+      connection: opts.topology.connection,
+      socketOptions: opts.socketOptions,
+      exchanges: opts.topology.exchanges
+    },
+    requestTimeout: this.requestTimeout,
+    publishTimeout: this.publishTimeout
+  })
 
   const logger = (this.logger = opts.logger || {
     debug: console.log,
@@ -62,6 +71,34 @@ function Mq2 (opts) {
       }
   )
 
+  this.writeKanin.on('error', err => {
+    throw err
+  })
+
+  this.writeKanin.on('channel.error', err => {
+    logger.warn(`Rabbitmq write channel error ${err.stack}`)
+  })
+
+  this.writeKanin.on('connection.opened', () => {
+    logger.debug('Rabbitmq write connection opened')
+  })
+
+  this.writeKanin.on('connection.closed', () => {
+    logger.debug('Rabbitmq write connection closed (intentional)')
+  })
+
+  this.writeKanin.on('connection.failed', err => {
+    logger.warn(`Rabbitmq write connection failed (unintentional) ${err.stack}`)
+  })
+
+  this.writeKanin.on(
+    'connection.unreachable',
+    opts.onConnectionUnreachable ||
+      function () {
+        throw new Error('Rabbitmq write connection unreachable')
+      }
+  )
+
   if (this.statisticsEnabled) {
     const serviceName = this.serviceName
     const publish = this.publish.bind(this)
@@ -88,9 +125,13 @@ function Mq2 (opts) {
   }
 }
 
-Mq2.prototype.configure = promisify(function (cb) {
-  this.kanin.configure(cb)
-})
+Mq2.prototype.configure = async function () {
+  const configure = promisify((k, cb) => k.configure(cb))
+  await Promise.all([
+    configure(this.kanin),
+    configure(this.writeKanin)
+  ])
+}
 
 Mq2.prototype.handle = promisify(function (opts, cb) {
   const queue = opts.queue
@@ -202,20 +243,28 @@ Mq2.prototype.handle = promisify(function (opts, cb) {
   kanin.handle({ queue, options, onMessage }, cb)
 })
 
-Mq2.prototype.close = promisify(function (cb) {
-  this.kanin.close(cb)
-})
+Mq2.prototype.close = async function () {
+  const close = promisify((k, cb) => k.close(cb))
+  await Promise.all([
+    close(this.kanin),
+    close(this.writeKanin)
+  ])
+}
 
 Mq2.prototype.unsubscribeAll = promisify(function (cb) {
   this.kanin.unsubscribeAll(cb)
 })
 
-Mq2.prototype.shutdown = promisify(function (cb) {
-  this.kanin.close(cb)
-})
+Mq2.prototype.shutdown = async function () {
+  const close = promisify((k, cb) => k.close(cb))
+  await Promise.all([
+    close(this.kanin),
+    close(this.writeKanin)
+  ])
+}
 
 Mq2.prototype.publish = promisify(function (exchangeName, message, cb) {
-  this.kanin.publish(exchangeName, message, cb)
+  this.writeKanin.publish(exchangeName, message, cb)
 })
 
 Mq2.prototype.request = promisify(async function (exchangeName, message, cb) {
