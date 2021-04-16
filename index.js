@@ -1,3 +1,4 @@
+'use strict'
 const assert = require('assert')
 const BufferedQueue = require('buffered-queue')
 const RoutingKeyParser = require('rabbit-routingkey-parser')
@@ -243,7 +244,13 @@ Mq2.prototype.handle = promisify(function (opts, cb) {
   kanin.handle({ queue, options, onMessage }, cb)
 })
 
-Mq2.prototype.close = async function () {
+Mq2.prototype.close = _close
+Mq2.prototype.shutdown = _close
+async function _close () {
+  if (this.statsQueue) {
+    this.statsQueue.onFlush()
+    this.statsQueue._useCustomResultFunction = false
+  }
   const close = promisify((k, cb) => k.close(cb))
   await Promise.all([
     close(this.kanin),
@@ -254,14 +261,6 @@ Mq2.prototype.close = async function () {
 Mq2.prototype.unsubscribeAll = promisify(function (cb) {
   this.kanin.unsubscribeAll(cb)
 })
-
-Mq2.prototype.shutdown = async function () {
-  const close = promisify((k, cb) => k.close(cb))
-  await Promise.all([
-    close(this.kanin),
-    close(this.writeKanin)
-  ])
-}
 
 Mq2.prototype.publish = promisify(function (exchangeName, message, cb) {
   this.writeKanin.publish(exchangeName, message, cb)

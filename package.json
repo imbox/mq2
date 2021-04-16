@@ -18,11 +18,11 @@
   },
   "homepage": "https://github.com/imbox/mq2#readme",
   "devDependencies": {
-    "standard": "^14.3.1"
+    "standard": "^16.0.3"
   },
   "dependencies": {
-    "buffered-queue": "^0.1.4",
-    "kanin": "^3.0.0",
-    "rabbit-routingkey-parser": "^1.1.2"
+    "buffered-queue": "^1.0.0",
+    "kanin": "^3.0.4",
+    "rabbit-routingkey-parser": "^1.1.4"
   }
 }
