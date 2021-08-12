@@ -1,28 +1,50 @@
 {
   "name": "mq2",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Second generation ImBox RabbitMQ client",
-  "main": "index.js",
-  "scripts": {
-    "lint": "standard"
+  "homepage": "https://github.com/imbox/mq2#readme",
+  "bugs": {
+    "url": "https://github.com/imbox/mq2/issues"
   },
+  "license": "",
+  "author": "Mathias Lundell",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/imbox/mq2.git"
   },
-  "author": "Mathias Lundell",
   "private": true,
-  "license": "",
-  "bugs": {
-    "url": "https://github.com/imbox/mq2/issues"
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "*.d.ts",
+    "index.js",
+    "lib",
+    "types"
+  ],
+  "engines": {
+    "node": ">=14.17.4"
   },
-  "homepage": "https://github.com/imbox/mq2#readme",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettierx --write '**/*.js'",
+    "format:watch": "onchange '**/*.js' -- prettierx --write {{changed}}"
+  },
   "devDependencies": {
-    "standard": "^16.0.3"
+    "@types/amqplib": "^0.8.1",
+    "eslint": "7.32.0",
+    "eslint-config-standard": "16.0.3",
+    "eslint-plugin-import": "2.24.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettierx": "0.18.0",
+    "eslint-plugin-promise": "4.2.1",
+    "onchange": "^7.1.0",
+    "prettierx": "0.18.3"
   },
   "dependencies": {
-    "buffered-queue": "^1.0.0",
-    "kanin": "^3.0.4",
+    "amqp-connection-manager": "luddd3/node-amqp-connection-manager",
+    "amqplib": "^0.8.0",
     "rabbit-routingkey-parser": "^1.1.4"
   }
 }
