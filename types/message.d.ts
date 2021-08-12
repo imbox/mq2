@@ -26,8 +26,8 @@ export default class Message {
     nack(): void;
     reject(): void;
     toJSON(): {
-        fields: MessageFields;
-        properties: MessageProperties;
-        body: unknown;
+        fields: Message['fields'];
+        properties: Message['properties'];
+        body: Message['body'];
     };
 }

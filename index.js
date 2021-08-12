@@ -1,6 +1,6 @@
 import Mq2 from './lib/mq.js'
-import Message from './lib/message'
-import Request from './lib/request'
+import Message from './lib/message.js'
+import Request from './lib/request.js'
 import errors from './lib/errors.js'
 
 export { Message, Request, errors }
