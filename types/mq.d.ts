@@ -61,7 +61,7 @@ export interface Logger {
   warn(msg: string, ...args: unknown[]): void;
 }
 
-export default class Mq2 {
+export default class Mq {
   constructor({ topology, logger, unblockTimeout, reconnectTimeout, reconnectTime, unhandledTimeout, requestTimeout }: {
     /**
      * A topology which will be created if it not already exists. It also

@@ -1,8 +1,6 @@
-import Mq2 from './types/mq'
+import Mq from './types/mq'
+import Message from './types/message'
+import Request from './types/request'
+import errors from './types/errors'
 
-export * from './types/message'
-export * from './types/request'
-export * from './types/errors'
-export * from './types/topology'
-
-export default Mq2
+export { Mq, Message, Request, errors }

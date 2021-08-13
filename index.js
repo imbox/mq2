@@ -1,8 +1,11 @@
-import Mq2 from './lib/mq.js'
-import Message from './lib/message.js'
-import Request from './lib/request.js'
-import errors from './lib/errors.js'
+const Mq = require('./lib/mq')
+const Message = require('./lib/message')
+const Request = require('./lib/request')
+const errors = require('./lib/errors')
 
-export { Message, Request, errors }
-
-export default Mq2
+module.exports = {
+  Mq,
+  Message,
+  Request,
+  errors
+}

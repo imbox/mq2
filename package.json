@@ -13,7 +13,6 @@
     "url": "git+https://github.com/imbox/mq2.git"
   },
   "private": true,
-  "type": "module",
   "main": "index.js",
   "types": "index.d.ts",
   "files": [
@@ -26,6 +25,9 @@
     "node": ">=14.17.4"
   },
   "scripts": {
+    "test": "tap test/*.test.js --no-coverage",
+    "test:tap": "tap test/*.test.js --no-coverage ",
+    "test:tdd": "tap test/*.test.js -w --no-coverage-report",
     "test:typescript": "tsd",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -43,6 +45,9 @@
     "eslint-plugin-promise": "4.2.1",
     "onchange": "^7.1.0",
     "prettierx": "0.18.3",
+    "proxyquire": "^2.1.3",
+    "rewiremock": "^3.14.3",
+    "tap": "^15.0.9",
     "tsd": "^0.17.0"
   },
   "dependencies": {

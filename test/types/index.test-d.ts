@@ -1,16 +1,14 @@
 import { expectType } from 'tsd'
-import Mq2 from '../..'
-import Message from '../../types/message'
-import Request from '../../types/request'
+import { Mq, Message, Request } from '../../'
 
-const mq = new Mq2({
+const mq = new Mq({
   logger: console,
   topology: {
     connection: {}
   }
 })
 
-expectType<Mq2>(mq)
+expectType<Mq>(mq)
 
 expectType<Promise<void>>(mq.handle({
   queue: 'queueName',
