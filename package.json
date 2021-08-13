@@ -26,12 +26,14 @@
     "node": ">=14.17.4"
   },
   "scripts": {
+    "test:typescript": "tsd",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettierx --write '**/*.js'",
     "format:watch": "onchange '**/*.js' -- prettierx --write {{changed}}"
   },
   "devDependencies": {
+    "@types/amqp-connection-manager": "^2.0.12",
     "@types/amqplib": "^0.8.1",
     "eslint": "7.32.0",
     "eslint-config-standard": "16.0.3",
@@ -40,11 +42,18 @@
     "eslint-plugin-prettierx": "0.18.0",
     "eslint-plugin-promise": "4.2.1",
     "onchange": "^7.1.0",
-    "prettierx": "0.18.3"
+    "prettierx": "0.18.3",
+    "tsd": "^0.17.0"
   },
   "dependencies": {
     "amqp-connection-manager": "luddd3/node-amqp-connection-manager",
     "amqplib": "^0.8.0",
     "rabbit-routingkey-parser": "^1.1.4"
+  },
+  "tsd": {
+    "directory": "test/types",
+    "compilerOptions": {
+      "esModuleInterop": true
+    }
   }
 }

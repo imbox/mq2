@@ -1,3 +1,4 @@
+import { MessagePropertyHeaders, Options } from 'amqplib'
 import Message from './message'
 import Request from './request'
 import { Topology } from './topology'
@@ -13,87 +14,119 @@ export interface HandleOptions {
    */
   types?: string[];
   /**
-   * Number of messages claim
+   * Number of messages to claim concurrently
    */
   prefetch?: number;
+  /**
+   * Exclusive consumer - first consumer is the only one able to consume from
+   * queue
+   * https://www.rabbitmq.com/consumers.html
+   */
   exclusive?: boolean;
+  /**
+   * If true - messages are automatically acked when received
+   * https://www.rabbitmq.com/consumers.html
+   */
   noAck?: boolean;
+  /**
+   * Custom arguments, e.g. "x-single-active-consumer": true
+   * https://www.rabbitmq.com/consumers.html
+   */
   arguments?: unknown;
-  handler: (message: Message | Request) => Promise<unknown>;
-  onUncaughtException: (err: Error, message: Message | Request) => unknown;
+  /**
+   * Called just before the message handler
+   */
+  preHandler?: (message: Message | Request) => Promise<void>;
+  /**
+   * Your custom message handler
+   */
+  handler: (message: Message | Request) => Promise<void>;
+  /**
+   * Called on e.g. message handling timeout
+   */
+  onUncaughtException?: (err: Error, message: Message | Request) => void;
+}
+
+export interface PublishMessage {
+  body: Buffer | string | unknown;
+  routingKey?: string;
+  headers?: MessagePropertyHeaders;
+}
+
+export interface PublishRequest extends PublishMessage {
+  timeout?: number
 }
 
 export interface Logger {
-  warn (msg: string, ...args: unknown[]): void;
+  warn(msg: string, ...args: unknown[]): void;
 }
 
 export default class Mq2 {
-    constructor({ topology, logger, unblockTimeout, reconnectTimeout, reconnectTime, unhandledTimeout, requestTimeout }: {
-        /**
-         * A topology which will be created if it not already exists. It also
-         * contains all connection options
-         */
-        topology: Topology;
-        /**
-         * A custom logger
-         */
-        logger?: Logger;
-        /**
-         * Time to wait for a blocked connection to unblock
-         */
-        unblockTimeout?: number;
-        /**
-         * How long to wait for a reconnect before throwing errors
-         */
-        reconnectTimeout?: number;
-        /**
-         * How long to wait until trying to connect after a disconnect
-         */
-        reconnectTime?: number;
-        /**
-         * How long to wait for message handle completion before rejecting the
-         * message
-         */
-        unhandledTimeout?: number;
-        /**
-         * How long to wait for a rpc request reply
-         */
-        requestTimeout?: number;
-    });
-
+  constructor({ topology, logger, unblockTimeout, reconnectTimeout, reconnectTime, unhandledTimeout, requestTimeout }: {
     /**
-     * Connect to RabbitMQ and assert topology
+     * A topology which will be created if it not already exists. It also
+     * contains all connection options
      */
-    configure(): Promise<void>;
-
+    topology: Topology;
     /**
-     * Close connection to RabbitMQ
+     * A custom logger
      */
-    shutdown(): Promise<void>;
-
+    logger?: Logger;
     /**
-     * Close connection to RabbitMQ
+     * Time to wait for a blocked connection to unblock
      */
-    close(): Promise<void>;
-
+    unblockTimeout?: number;
     /**
-     * Cancel subscription to all RabbitMQ queues
+     * How long to wait for a reconnect before throwing errors
      */
-    unsubscribeAll(): Promise<void>;
-
+    reconnectTimeout?: number;
     /**
-     * Subscribe to queue messages
+     * How long to wait until trying to connect after a disconnect
      */
-    handle(options: HandleOptions): Promise<void>;
-
+    reconnectTime?: number;
     /**
-     * Publish a message to RabbitMQ
+     * How long to wait for message handle completion before rejecting the
+     * message
      */
-    publish(exchange: string, { body, routingKey, headers }: {
-        body: unknown;
-        routingKey?: string;
-        headers?: unknown;
-    }, options?: {}): Promise<void>;
+    unhandledTimeout?: number;
+    /**
+     * How long to wait for a rpc request reply
+     */
+    requestTimeout?: number;
+  });
 
-    request(exchange: string, message: unknown, options?: unknown): Promise<Message>;
+  /**
+   * Connect to RabbitMQ and assert topology
+   */
+  configure(): Promise<void>;
+
+  /**
+   * Close connection to RabbitMQ
+   */
+  shutdown(): Promise<void>;
+
+  /**
+   * Close connection to RabbitMQ
+   */
+  close(): Promise<void>;
+
+  /**
+   * Cancel subscription to all RabbitMQ queues
+   */
+  unsubscribeAll(): Promise<void>;
+
+  /**
+   * Subscribe to queue messages
+   */
+  handle(options: HandleOptions): Promise<void>;
+
+  /**
+   * Publish a message to RabbitMQ
+   */
+  publish(exchange: string, message: PublishMessage, options?: Options.Publish): Promise<void>;
+
+  /**
+   * Publish an rpc message - a response is expected
+   */
+  request(exchange: string, message: PublishRequest, options?: Options.Publish): Promise<Message>;
 }

@@ -1,6 +1,6 @@
 export class MqError extends Error {
-    constructor(message: any);
-    code: string;
+  constructor(message: any);
+  code: string;
 }
 export class MessageHandlerError extends MqError {
 }
