@@ -51,7 +51,7 @@
     "tsd": "^0.17.0"
   },
   "dependencies": {
-    "amqp-connection-manager": "luddd3/node-amqp-connection-manager",
+    "amqp-connection-manager": "luddd3/node-amqp-connection-manager#323c149",
     "amqplib": "^0.8.0",
     "rabbit-routingkey-parser": "^1.1.4"
   },
