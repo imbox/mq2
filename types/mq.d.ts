@@ -62,7 +62,7 @@ export interface Logger {
 }
 
 export default class Mq {
-  constructor({ topology, logger, unblockTimeout, reconnectTimeout, reconnectTime, unhandledTimeout, requestTimeout }: {
+  constructor({ topology, logger, socketTimeout, unblockTimeout, reconnectTimeout, reconnectTime, unhandledTimeout, requestTimeout }: {
     /**
      * A topology which will be created if it not already exists. It also
      * contains all connection options
@@ -73,15 +73,22 @@ export default class Mq {
      */
     logger?: Logger;
     /**
+     * How long to wait for each connection attempt (ms)
+     * Overwrites any timeout set in topology.socketOptions.timeout
+     * Default: 5000 ms
+     */
+    socketTimeout?: number;
+    /**
      * Time to wait for a blocked connection to unblock
      */
     unblockTimeout?: number;
     /**
-     * How long to wait for a reconnect before throwing errors
+     * How long to wait for any connection attempt to succeed before emitting
+     * errors
      */
     reconnectTimeout?: number;
     /**
-     * How long to wait until trying to connect after a disconnect
+     * How long to wait until trying to reconnect after a disconnect
      */
     reconnectTime?: number;
     /**
@@ -98,19 +105,7 @@ export default class Mq {
   /**
    * Connect to RabbitMQ and assert topology
    */
-  configure({ socketTimeout, connectTimeout }: {
-    /**
-     * How long to wait for each connection attempt (ms)
-     * Overwrites any timeout set in topology.socketOptions.timeout
-     * Default: 5000 ms
-     */
-    socketTimeout?: number
-    /**
-     * How long to wait before ceasing all connection attempts (ms)
-     * Default: 2 * socketTimeout
-     */
-    connectTimeout?: number
-  }): Promise<void>;
+  configure(): Promise<void>;
 
   /**
    * Close connection to RabbitMQ
