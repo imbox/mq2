@@ -98,7 +98,19 @@ export default class Mq {
   /**
    * Connect to RabbitMQ and assert topology
    */
-  configure(): Promise<void>;
+  configure({ socketTimeout, connectTimeout }: {
+    /**
+     * How long to wait for each connection attempt (ms)
+     * Overwrites any timeout set in topology.socketOptions.timeout
+     * Default: 5000 ms
+     */
+    socketTimeout?: number
+    /**
+     * How long to wait before ceasing all connection attempts (ms)
+     * Default: 2 * socketTimeout
+     */
+    connectTimeout?: number
+  }): Promise<void>;
 
   /**
    * Close connection to RabbitMQ
