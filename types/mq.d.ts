@@ -18,6 +18,11 @@ export interface HandleOptions {
    */
   prefetch?: number;
   /**
+   * Time to wait for message handler to finish. Overwrites the default
+   * unhandledTimeout set on Mq
+   */
+  unhandledTimeout?: number;
+  /**
    * Exclusive consumer - first consumer is the only one able to consume from
    * queue
    * https://www.rabbitmq.com/consumers.html
@@ -100,6 +105,10 @@ export default class Mq {
      * How long to wait for a rpc request reply
      */
     requestTimeout?: number;
+    /**
+     * How long to wait for message to be published to RabbitMQ
+     */
+    publishTimeout?: number;
   });
 
   /**
@@ -130,10 +139,10 @@ export default class Mq {
   /**
    * Publish a message to RabbitMQ
    */
-  publish(exchange: string, message: PublishMessage, options?: Options.Publish): Promise<void>;
+  publish(exchange: string, message: PublishMessage, options?: Options.Publish & { timeout?: number }): Promise<void>;
 
   /**
    * Publish an rpc message - a response is expected
    */
-  request(exchange: string, message: PublishRequest, options?: Options.Publish): Promise<Message>;
+  request(exchange: string, message: PublishRequest, options?: Options.Publish & { timeout?: number }): Promise<Message>;
 }
