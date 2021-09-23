@@ -20,6 +20,10 @@ class FakeConnectionWrapper extends EventEmitter {
     this.channel = null
   }
 
+  connect () {
+    return Promise.resolve()
+  }
+
   createChannel (...args) {
     this.channel = new FakeChannelWrapper(...args)
     setImmediate(() => {
@@ -29,24 +33,7 @@ class FakeConnectionWrapper extends EventEmitter {
   }
 }
 
-class FakeAmqpConnectionManager {
-  constructor () {
-    this.connections = []
-  }
-
-  connect (...args) {
-    const connection = new FakeConnectionWrapper(...args)
-    this.connections.push(connection)
-
-    setImmediate(() => {
-      connection.emit('connect')
-    })
-    return connection
-  }
-}
-
 module.exports = {
-  FakeAmqpConnectionManager,
   FakeConnectionWrapper,
   FakeChannelWrapper
 }
