@@ -78,6 +78,11 @@ export default class Mq {
      */
     logger?: Logger;
     /**
+     * Create confirm channel or not. (default false)
+     * Every message published with a confirm channel is acked/nacked by RabbitMq
+     */
+    confirm?: boolean;
+    /**
      * How long to wait for each connection attempt (ms)
      * Overwrites any timeout set in topology.socketOptions.timeout
      * Default: 5000 ms
