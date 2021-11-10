@@ -50,8 +50,8 @@
     "tsd": "^0.17.0"
   },
   "dependencies": {
-    "amqp-connection-manager": "luddd3/node-amqp-connection-manager#98a83b1",
-    "amqplib": "^0.8.0",
+    "amqp-connection-manager": "luddd3/node-amqp-connection-manager#adcf82e",
+    "amqplib": "luddd3/amqp.node#9ddfb7b",
     "rabbit-routingkey-parser": "^1.1.4"
   },
   "tsd": {
