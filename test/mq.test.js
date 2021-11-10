@@ -49,7 +49,8 @@ test('publish', async t => {
       options: {
         headers: undefined,
         contentEncoding: 'utf8',
-        contentType: 'application/json'
+        contentType: 'application/json',
+        timeout: 5000
       }
     }
   ])
