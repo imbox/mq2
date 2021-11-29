@@ -35,7 +35,6 @@
     "format:watch": "onchange '**/*.js' -- prettierx --write {{changed}}"
   },
   "devDependencies": {
-    "@types/amqp-connection-manager": "^2.0.12",
     "@types/amqplib": "^0.8.1",
     "eslint": "7.32.0",
     "eslint-config-standard": "16.0.3",
@@ -50,7 +49,7 @@
     "tsd": "^0.17.0"
   },
   "dependencies": {
-    "amqp-connection-manager": "luddd3/node-amqp-connection-manager#adcf82e",
+    "amqp-connection-manager": "luddd3/node-amqp-connection-manager#c945cd4",
     "amqplib": "luddd3/amqp.node#9ddfb7b",
     "rabbit-routingkey-parser": "^1.1.4"
   },
