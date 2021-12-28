@@ -4,3 +4,4 @@ import Request from './types/request'
 import errors from './types/errors'
 
 export { Mq, Message, Request, errors }
+export default Mq

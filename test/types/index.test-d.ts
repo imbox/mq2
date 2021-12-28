@@ -1,5 +1,5 @@
 import { expectType } from 'tsd'
-import { Mq, Message, Request } from '../../'
+import DefaultMq, { Mq, Message, Request } from '../../'
 
 const mq = new Mq({
   logger: console,
@@ -16,3 +16,13 @@ expectType<Promise<void>>(mq.handle({
     expectType<Message | Request>(message)
   }
 }))
+
+const dmq = new DefaultMq({
+  logger: console,
+  topology: {
+    connection: {}
+  }
+})
+
+expectType<Mq>(dmq)
+
