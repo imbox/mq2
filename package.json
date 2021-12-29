@@ -14,13 +14,8 @@
   },
   "private": true,
   "main": "index.js",
+  "type": "commonjs",
   "types": "index.d.ts",
-  "files": [
-    "*.d.ts",
-    "index.js",
-    "lib",
-    "types"
-  ],
   "engines": {
     "node": ">=14.17.4"
   },
