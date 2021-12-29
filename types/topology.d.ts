@@ -92,7 +92,7 @@ interface Binding {
   keys: string[];
 }
 
-export interface Topology {
+export type Topology = {
   connection: Connection;
   socketOptions?: AmqpConnectionManagerOptions['connectionOptions'];
   replyQueue?: Queue;
