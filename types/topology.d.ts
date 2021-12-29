@@ -13,7 +13,7 @@ interface Connection {
    *
    * Default value: 'localhost'
    */
-  hostname?: string;
+  host?: string;
   /**
    * Port used for connecting to the server.
    *
