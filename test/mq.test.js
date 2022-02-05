@@ -1,15 +1,13 @@
 'use strict'
-
+const test = require('brittle')
 const proxyquire = require('proxyquire').noCallThru()
-const { test } = require('tap')
 const { FakeConnectionWrapper } = require('./fixtures')
 const { Mq } = require('../')
 
 const fakeAmqp = { AmqpConnectionManagerClass: FakeConnectionWrapper }
 
 test('Mq', t => {
-  t.plan(1)
-  t.doesNotThrow(() => new Mq({ topology: { connection: {} } }))
+  t.execution(() => new Mq({ topology: { connection: {} } }))
 })
 
 test('configure', async t => {
@@ -36,12 +34,12 @@ test('publish', async t => {
   })
 
   const published = mq.publishConnection.channel.published
-  t.equal(published.length, 1)
+  t.is(published.length, 1)
 
-  t.equal(published[0].options.correlationId.length, 36)
+  t.is(published[0].options.correlationId.length, 36)
   delete published[0].options.correlationId
 
-  t.strictSame(published, [
+  t.alike(published, [
     {
       exchange: 'exchange',
       routingKey: 'routingKey',
