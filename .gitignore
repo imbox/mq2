@@ -1,9 +1,15 @@
-package-lock.json
-
 # Logs
 logs
 *.log
 npm-debug.log*
 
-# Dependency directory
+# nyc test output
+.nyc_output
+
+# Dependency directories
 node_modules
+
+# Lock files
+package-lock.json
+
+coverage
