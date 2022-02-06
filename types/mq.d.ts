@@ -59,7 +59,7 @@ export interface PublishMessage {
 }
 
 export interface PublishRequest extends PublishMessage {
-  timeout?: number
+  timeout?: number;
 }
 
 export interface Logger {
