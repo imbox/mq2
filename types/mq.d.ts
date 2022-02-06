@@ -64,6 +64,7 @@ export interface PublishRequest extends PublishMessage {
 
 export interface Logger {
   warn(msg: string, ...args: unknown[]): void;
+  error(msg: string, ...args: unknown[]): void;
 }
 
 export default class Mq {
