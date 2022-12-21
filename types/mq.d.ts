@@ -1,4 +1,5 @@
-import { MessagePropertyHeaders, Options } from 'amqplib'
+import { MessagePropertyHeaders } from 'amqplib'
+import { AmqpConnectionManager, ChannelWrapper, Options } from 'amqp-connection-manager'
 import Message from './message'
 import Request from './request'
 import { Topology } from './topology'
@@ -74,47 +75,76 @@ export default class Mq {
      * contains all connection options
      */
     topology: Topology;
+
     /**
      * A custom logger
      */
     logger?: Logger;
+
     /**
      * Create confirm channel or not. (default false)
      * Every message published with a confirm channel is acked/nacked by RabbitMq
      */
     confirm?: boolean;
+
     /**
      * How long to wait for each connection attempt (ms)
      * Overwrites any timeout set in topology.socketOptions.timeout
      * Default: 5000 ms
      */
     socketTimeout?: number;
+
     /**
      * Time to wait for a blocked connection to unblock
      */
     unblockTimeout?: number;
+
     /**
      * How long to wait for any connection attempt to succeed before emitting
      * errors
      */
     reconnectTimeout?: number;
+
     /**
      * How long to wait until trying to reconnect after a disconnect
      */
     reconnectTime?: number;
+
     /**
      * How long to wait for message handle completion before rejecting the
      * message
      */
     unhandledTimeout?: number;
+
     /**
      * How long to wait for a rpc request reply
      */
     requestTimeout?: number;
+
     /**
      * How long to wait for message to be published to RabbitMQ
      */
     publishTimeout?: number;
+
+    /**
+     * Connection used read messages
+     */
+    consumeConnection?: AmqpConnectionManager
+
+    /**
+     * The currently connected channel used for reading messages
+     */
+    consumeChannel?: ChannelWrapper
+
+    /**
+     * Connection used to write messages
+     */
+    publishConnection?: AmqpConnectionManager
+
+    /**
+     * The currently connected channel used for writing messages
+     */
+    publishChannel?: ChannelWrapper
   });
 
   /**

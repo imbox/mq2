@@ -29,7 +29,7 @@
     "format:watch": "onchange '**/*.js' -- prettierx --write {{changed}}"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.8.2",
+    "@types/amqplib": "^0.10.0",
     "brittle": "^2.0.3",
     "eslint": "7.32.0",
     "eslint-config-standard": "16.0.3",
