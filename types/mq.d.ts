@@ -42,11 +42,11 @@ export interface HandleOptions {
   /**
    * Called just before the message handler
    */
-  preHandler?: (message: Message | Request) => Promise<void>;
+  preHandler?: (message: Message | Request) => Promise<void> | void;
   /**
    * Your custom message handler
    */
-  handler: (message: Message | Request) => Promise<void>;
+  handler: (message: Message | Request) => Promise<void> | void;
   /**
    * Called on e.g. message handling timeout
    */
@@ -125,26 +125,6 @@ export default class Mq {
      * How long to wait for message to be published to RabbitMQ
      */
     publishTimeout?: number;
-
-    /**
-     * Connection used read messages
-     */
-    consumeConnection?: AmqpConnectionManager
-
-    /**
-     * The currently connected channel used for reading messages
-     */
-    consumeChannel?: ChannelWrapper
-
-    /**
-     * Connection used to write messages
-     */
-    publishConnection?: AmqpConnectionManager
-
-    /**
-     * The currently connected channel used for writing messages
-     */
-    publishChannel?: ChannelWrapper
   });
 
   /**
@@ -181,4 +161,24 @@ export default class Mq {
    * Publish an rpc message - a response is expected
    */
   request(exchange: string, message: PublishRequest, options?: Options.Publish & { timeout?: number }): Promise<Message>;
+
+  /**
+   * Connection used read messages
+   */
+  consumeConnection: AmqpConnectionManager | null
+
+  /**
+   * The currently connected channel used for reading messages
+   */
+  consumeChannel: ChannelWrapper | null
+
+  /**
+   * Connection used to write messages
+   */
+  publishConnection: AmqpConnectionManager | null
+
+  /**
+   * The currently connected channel used for writing messages
+   */
+  publishChannel: ChannelWrapper | null
 }
