@@ -89,7 +89,7 @@ interface Binding {
   /**
    * Routing key patterns to bind
    */
-  keys: string[];
+  keys?: string[];
 }
 
 export type Topology = {
