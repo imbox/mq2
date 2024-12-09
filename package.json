@@ -1,5 +1,5 @@
 {
-  "name": "mq2",
+  "name": "@imbox/mq2",
   "version": "3.2.0",
   "description": "Second generation ImBox RabbitMQ client",
   "homepage": "https://github.com/imbox/mq2#readme",
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/imbox/mq2.git"
   },
-  "private": true,
+  "private": false,
   "main": "index.js",
   "type": "commonjs",
   "types": "index.d.ts",
