@@ -95,6 +95,7 @@ interface Binding {
 export type Topology = {
   connection: Connection;
   socketOptions?: AmqpConnectionManagerOptions['connectionOptions'];
+  findServers?: AmqpConnectionManagerOptions['findServers'];
   replyQueue?: Queue;
   exchanges?: Exchange[];
   queues?: Queue[];
