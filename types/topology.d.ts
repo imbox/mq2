@@ -9,28 +9,49 @@ interface Connection {
    */
   protocol?: string;
   /**
-   * Hostname used for connecting to the server.
-   *
-   * Default value: 'localhost'
-   */
+    * Hostname used for connecting to the server.
+    *
+    * Default value: 'localhost'
+    */
+  hostname?: string
+  /**
+    * Hostname used for connecting to the server.
+    * @deprecated Use hostname instead
+    *
+    * Default value: 'localhost'
+    */
   host?: string;
   /**
-   * Port used for connecting to the server.
-   *
-   * Default value: 5672
-   */
+    * Port used for connecting to the server.
+    *
+    * Default value: 5672
+    */
   port?: number;
   /**
-   * Username used for authenticating against the server.
-   *
-   * Default value: 'guest'
-   */
+    * Username used for authenticating against the server.
+    *
+    * Default value: 'guest'
+    */
+  username?: string;
+  /**
+    * Username used for authenticating against the server.
+    * @deprecated Use `username` instead
+    *
+    * Default value: 'guest'
+    */
   user?: string;
   /**
-   * Password used for authenticating against the server.
-   *
-   * Default value: 'guest'
-   */
+    * Password used for authenticating against the server.
+    *
+    * Default value: 'guest'
+    */
+  password?: string;
+  /**
+    * Password used for authenticating against the server.
+    * @deprecated Use `password` instead
+    *
+    * Default value: 'guest'
+    */
   pass?: string;
   /**
    * The desired locale for error messages. RabbitMQ only ever uses en_US
