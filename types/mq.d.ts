@@ -1,5 +1,10 @@
 import { MessagePropertyHeaders } from 'amqplib'
-import { AmqpConnectionManager, ChannelWrapper, Options } from 'amqp-connection-manager'
+import {
+  AmqpConnectionManager,
+  AmqpConnectionManagerOptions,
+  ChannelWrapper,
+  Options
+} from 'amqp-connection-manager'
 import Message from './message'
 import Request from './request'
 import { Topology } from './topology'
@@ -80,6 +85,11 @@ export default class Mq {
      * A custom logger
      */
     logger?: Logger;
+
+    /**
+     * A custom function to find servers to connect to
+     */
+    findServers?: AmqpConnectionManagerOptions['findServers'];
 
     /**
      * Create confirm channel or not. (default false)
