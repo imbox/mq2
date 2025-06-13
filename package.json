@@ -1,6 +1,6 @@
 {
   "name": "@imbox/mq2",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "description": "Second generation ImBox RabbitMQ client",
   "homepage": "https://github.com/imbox/mq2#readme",
   "bugs": {
@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "amqp-connection-manager": "^4.1.8",
-    "amqplib": "0.10.5",
+    "amqplib": "0.10.8",
     "rabbit-routingkey-parser": "^1.1.4"
   },
   "tsd": {
