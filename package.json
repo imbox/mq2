@@ -29,7 +29,7 @@
     "format:watch": "onchange '**/*.js' -- prettierx --write {{changed}}"
   },
   "devDependencies": {
-    "@types/amqplib": "0.10.6",
+    "@types/amqplib": "^0.10.7",
     "brittle": "^2.0.3",
     "eslint": "7.32.0",
     "eslint-config-standard": "16.0.3",
@@ -43,8 +43,8 @@
     "tsd": "^0.20.0"
   },
   "dependencies": {
-    "amqp-connection-manager": "^4.1.8",
-    "amqplib": "0.10.9",
+    "amqp-connection-manager": "^5.0.0",
+    "amqplib": "^0.10.9",
     "rabbit-routingkey-parser": "^1.1.4"
   },
   "tsd": {
