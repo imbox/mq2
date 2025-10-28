@@ -1,11 +1,7 @@
 'use strict'
-const test = require('brittle')
+const { test } = require('node:test')
 const { EventEmitter, once } = require('events')
 const { Mq } = require('../')
-
-test.configure({
-  timeout: 2e3
-})
 
 const connection = {
   host: 'localhost',
@@ -15,7 +11,7 @@ const connection = {
   heartbeat: 10
 }
 
-test('publish/consume json', async t => {
+test('publish/consume json', { timeout: 2000 }, async t => {
   const exchanges = [{ name: 'ex', type: 'topic' }]
   const publisher = new Mq({
     topology: {
@@ -38,7 +34,7 @@ test('publish/consume json', async t => {
     }
   })
 
-  t.teardown(async () => {
+  t.after(async () => {
     await Promise.all([publisher.close(), consumer.close()])
   })
 
@@ -65,16 +61,24 @@ test('publish/consume json', async t => {
   ])
 
   const message = messages[0]
-  t.is(message.fields.exchange, 'ex')
-  t.is(message.fields.routingKey, 'a.b.the.rest')
-  t.alike(message.fields.parts, ['a.b.the.rest', 'a', 'b', 'the.rest'])
-  t.is(message.fields.redelivered, false)
-  t.is(message.properties.contentType, 'application/json')
-  t.is(message.properties.contentEncoding, 'utf8')
-  t.alike(message.content, Buffer.from(JSON.stringify({ test: 'test' })))
+  t.assert.equal(message.fields.exchange, 'ex')
+  t.assert.equal(message.fields.routingKey, 'a.b.the.rest')
+  t.assert.deepStrictEqual(message.fields.parts, [
+    'a.b.the.rest',
+    'a',
+    'b',
+    'the.rest'
+  ])
+  t.assert.equal(message.fields.redelivered, false)
+  t.assert.equal(message.properties.contentType, 'application/json')
+  t.assert.equal(message.properties.contentEncoding, 'utf8')
+  t.assert.deepStrictEqual(
+    message.content,
+    Buffer.from(JSON.stringify({ test: 'test' }))
+  )
 })
 
-test('request/response', async t => {
+test('request/response', { timeout: 2000 }, async t => {
   const exchanges = [{ name: 'request-ex', type: 'topic' }]
   const mq1 = new Mq({
     topology: {
@@ -100,7 +104,7 @@ test('request/response', async t => {
     }
   })
 
-  t.teardown(async () => {
+  t.after(async () => {
     await Promise.allSettled([mq1.close(), mq2.close()])
   })
 
@@ -131,19 +135,19 @@ test('request/response', async t => {
     )
   ])
 
-  t.is(request.fields.exchange, 'request-ex')
-  t.is(request.fields.redelivered, false)
-  t.is(request.fields.routingKey, 'rkey')
-  t.is(request.properties.contentType, 'text/plain')
-  t.is(request.properties.replyTo, 'reply-queue')
-  t.is(request.properties.expiration, '1000')
-  t.is(request.body, 'a')
-  t.alike(request.content, Buffer.from('a'))
-  t.is(response.fields.exchange, '')
-  t.is(response.fields.redelivered, false)
-  t.is(response.fields.routingKey, 'reply-queue')
-  t.is(response.properties.contentType, 'application/json')
-  t.is(response.properties.contentEncoding, 'utf8')
-  t.alike(response.body, { b: 'b' })
-  t.is.coercively(response.content, null)
+  t.assert.equal(request.fields.exchange, 'request-ex')
+  t.assert.equal(request.fields.redelivered, false)
+  t.assert.equal(request.fields.routingKey, 'rkey')
+  t.assert.equal(request.properties.contentType, 'text/plain')
+  t.assert.equal(request.properties.replyTo, 'reply-queue')
+  t.assert.equal(request.properties.expiration, '1000')
+  t.assert.equal(request.body, 'a')
+  t.assert.deepStrictEqual(request.content, Buffer.from('a'))
+  t.assert.equal(response.fields.exchange, '')
+  t.assert.equal(response.fields.redelivered, false)
+  t.assert.equal(response.fields.routingKey, 'reply-queue')
+  t.assert.equal(response.properties.contentType, 'application/json')
+  t.assert.equal(response.properties.contentEncoding, 'utf8')
+  t.assert.deepStrictEqual(response.body, { b: 'b' })
+  t.assert.equal(response.content, null)
 })
