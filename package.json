@@ -1,6 +1,6 @@
 {
   "name": "@imbox/mq2",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Second generation ImBox RabbitMQ client",
   "homepage": "https://github.com/imbox/mq2#readme",
   "bugs": {
