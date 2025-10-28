@@ -9,7 +9,4 @@ npm-debug.log*
 # Dependency directories
 node_modules
 
-# Lock files
-package-lock.json
-
 coverage
