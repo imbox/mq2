@@ -1,3 +1,4 @@
+/* eslint-disable n/no-unsupported-features/node-builtins */
 'use strict'
 const { mock, test } = require('node:test')
 const { setTimeout, setImmediate } = require('node:timers/promises')

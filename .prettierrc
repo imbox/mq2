@@ -1,10 +1,6 @@
 {
-  "generatorStarSpacing": true,
-  "spaceBeforeFunctionParen": true,
-  "singleQuote": true,
-  "jsxSingleQuote": true,
   "semi": false,
-  "yieldStarSpacing": true,
+  "singleQuote": true,
   "trailingComma": "none",
   "arrowParens": "avoid"
 }

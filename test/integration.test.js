@@ -46,7 +46,7 @@ test('publish/consume json', { timeout: 2000 }, async t => {
     prefetch: 1,
     noAck: false,
     types: ['*.*.#'], // Without this, message.fields.parts will be empty
-    handler (message) {
+    handler(message) {
       message.ack()
       ee.emit('message', message)
     }
@@ -114,7 +114,7 @@ test('request/response', { timeout: 2000 }, async t => {
   await mq2.handle({
     queue: 'my-request-queue',
     noAck: true,
-    async handler (message) {
+    async handler(message) {
       await message.reply({
         b: 'b'
       })
