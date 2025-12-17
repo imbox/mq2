@@ -151,3 +151,62 @@ test('request/response', { timeout: 2000 }, async t => {
   t.assert.deepStrictEqual(response.body, { b: 'b' })
   t.assert.equal(response.content, null)
 })
+
+test('request/response - timeout', { timeout: 2000 }, async t => {
+  const exchanges = [{ name: 'request-ex', type: 'topic' }]
+  const mq1 = new Mq({
+    topology: {
+      connection,
+      exchanges,
+      replyQueue: {
+        name: 'reply-queue'
+      }
+    }
+  })
+
+  const mq2 = new Mq({
+    topology: {
+      connection,
+      exchanges,
+      queues: [{ name: 'my-request-queue', exclusive: true }],
+      bindings: [
+        {
+          exchange: 'request-ex',
+          target: 'my-request-queue',
+          keys: ['#']
+        }
+      ]
+    }
+  })
+
+  t.after(async () => {
+    await Promise.allSettled([mq1.close(), mq2.close()])
+  })
+
+  await Promise.all([mq1.configure(), mq2.configure()])
+
+  await mq2.handle({
+    queue: 'my-request-queue',
+    noAck: true,
+    async handler(_message) {
+      // Let it timeout
+    }
+  })
+
+  let error
+  try {
+    await mq1.request(
+      'request-ex',
+      {
+        routingKey: 'rkey',
+        timeout: 100,
+        body: Buffer.from('a')
+      },
+      { contentType: 'text/plain' }
+    )
+  } catch (err) {
+    error = err
+  }
+  t.assert.equal(error.name, 'RequestTimeoutError')
+  t.assert.equal(error.code, 'MQ_ERR_REQUEST_TIMEOUT')
+})
