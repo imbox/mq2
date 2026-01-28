@@ -1,6 +1,7 @@
 'use strict'
 const { test } = require('node:test')
-const { EventEmitter, once } = require('events')
+const { setTimeout: sleep } = require('node:timers/promises')
+const { EventEmitter, once } = require('node:events')
 const { Mq } = require('../')
 
 const connection = {
@@ -9,6 +10,21 @@ const connection = {
   user: 'guest',
   pass: 'guest',
   heartbeat: 10
+}
+
+async function rabbitRequest({ path, headers, method = 'GET' }) {
+  const response = await fetch(`http://localhost:15672/api${path}`, {
+    method,
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${connection.user}:${connection.pass}`).toString('base64')}`,
+      ...headers
+    }
+  })
+  if (response.status === 204) {
+    return null
+  } else {
+    return response.json()
+  }
 }
 
 test('publish/consume json', { timeout: 2000 }, async t => {
@@ -209,4 +225,57 @@ test('request/response - timeout', { timeout: 2000 }, async t => {
   }
   t.assert.equal(error.name, 'RequestTimeoutError')
   t.assert.equal(error.code, 'MQ_ERR_REQUEST_TIMEOUT')
+})
+
+test('handle connection error code 320', { timeout: 6000 }, async t => {
+  // On error code 320, reconnection should happen immediately and findServers
+  // should always be called, even though there might be urls that
+  // amqp-connection-manager haven't tried yet
+  let findServersCalled = 0
+  const mq = new Mq({
+    reconnectTime: 10e3,
+    topology: {
+      connection,
+      exchanges: [],
+      queues: [],
+      bindings: []
+    },
+    findServers() {
+      findServersCalled++
+      return [connection, connection]
+    }
+  })
+
+  t.after(async () => {
+    await mq.close()
+  })
+
+  await mq.configure()
+
+  // Wait at least 5 seconds to guarantee that connections can be retrieved
+  // from the http api
+  await sleep(5000)
+
+  const connections = await rabbitRequest({ path: '/connections' })
+  t.assert.equal(connections.length, 2)
+
+  await Promise.all(
+    connections.map(conn =>
+      rabbitRequest({
+        method: 'DELETE',
+        path: `/connections/${encodeURIComponent(conn.name)}`,
+        headers: { 'X-Reason': 'Migration to new cluster' }
+      })
+    )
+  )
+
+  t.assert.ok(!mq.publishConnection.isConnected())
+  t.assert.ok(!mq.consumeConnection.isConnected())
+
+  // Wait for connections to reconnect, but not as long as reconnectTime
+  await sleep(500)
+
+  t.assert.ok(mq.publishConnection.isConnected())
+  t.assert.ok(mq.consumeConnection.isConnected())
+  t.assert.equal(findServersCalled, 4)
 })
