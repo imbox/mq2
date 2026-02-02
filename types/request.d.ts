@@ -44,7 +44,7 @@ export default class Request {
   /**
    * The parsed content
    */
-  body?: Buffer | string | unknown;
+  body: Buffer | string | Record<string, unknown>;
   /**
    * Ack messages when noAck = false, else noop
    */
@@ -59,11 +59,14 @@ export default class Request {
   reject(): void;
   /**
    * Send a reply to the received request
-   * 
+   *
    * @param body - body of reply
    * @param options - publish options
    */
-  reply(body: unknown, options: Options.Publish): Promise<void>;
+  reply(
+    body: Buffer | string | Record<string, unknown>,
+    options: Options.Publish
+  ): Promise<void>;
   /**
    * Used when stringifying instances of this class
    */

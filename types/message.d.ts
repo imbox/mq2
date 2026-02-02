@@ -47,7 +47,7 @@ export default class Message {
   /**
    * The parsed content
    */
-  body?: Buffer | string | unknown;
+  body: Buffer | string | Record<string, unknown>;
   /**
    * Ack messages when noAck = false, else noop
    */
