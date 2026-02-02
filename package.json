@@ -44,7 +44,7 @@
   "dependencies": {
     "amqp-connection-manager": "^5.0.0",
     "amqplib": "^0.10.9",
-    "rabbit-routingkey-parser": "^1.1.4"
+    "rabbit-routingkey-parser": "^2.0.0"
   },
   "tsd": {
     "directory": "test/types",
