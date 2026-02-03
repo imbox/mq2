@@ -73,6 +73,6 @@ export default class Request {
   toJSON(): {
     fields: MessageFields;
     properties: MessageProperties;
-    body: unknown;
+    body: Request['body'];
   };
 }
